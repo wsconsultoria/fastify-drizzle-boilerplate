@@ -1,7 +1,6 @@
 import cors from '@fastify/cors';
 import jwt from '@fastify/jwt';
 import swagger from '@fastify/swagger';
-import swaggerUi from '@fastify/swagger-ui';
 import Fastify, { FastifyInstance } from 'fastify';
 import {
   jsonSchemaTransform,
@@ -12,8 +11,10 @@ import {
 import authenticate from '@/plugins/authenticate';
 import { registerRoutes } from '@/routes';
 
-// @ts-ignore
+// Scalar UI precisa ser importado via require
+/* eslint-disable @typescript-eslint/no-require-imports */
 const scalarUI = require('@scalar/fastify-api-reference');
+/* eslint-enable @typescript-eslint/no-require-imports */
 
 // Create Fastify instance
 export const app: FastifyInstance = Fastify({
@@ -21,7 +22,7 @@ export const app: FastifyInstance = Fastify({
 });
 
 // Setup function to register all plugins and routes
-export async function setupApp() {
+export async function setupApp(): Promise<FastifyInstance> {
   app.setValidatorCompiler(validatorCompiler);
   app.setSerializerCompiler(serializerCompiler);
 
@@ -32,6 +33,23 @@ export async function setupApp() {
 
   app.register(jwt, {
     secret: process.env.JWT_SECRET || 'supersecretkey',
+    verify: {
+      extractToken: request => {
+        // Tenta extrair o token do header de autorização
+        const authHeader = request.headers.authorization;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          return authHeader.substring(7);
+        }
+
+        // Tenta extrair o token do corpo da requisição (para refresh tokens)
+        if (request.body && typeof request.body === 'object' && 'refreshToken' in request.body) {
+          return request.body.refreshToken as string;
+        }
+
+        // Retorna undefined em vez de null
+        return undefined;
+      },
+    },
   });
 
   app.register(swagger, {

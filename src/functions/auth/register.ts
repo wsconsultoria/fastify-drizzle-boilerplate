@@ -1,10 +1,11 @@
 import { eq } from 'drizzle-orm';
 import { FastifyReply, FastifyRequest } from 'fastify';
 
-import { hashPassword } from './utils';
-
 import { db } from '@/drizzle/db';
 import { users } from '@/drizzle/schema';
+import { User } from '@/validators';
+
+import { hashPassword } from './utils';
 
 type RegisterRequest = {
   email: string;
@@ -16,7 +17,7 @@ type RegisterRequest = {
 export async function register(
   request: FastifyRequest<{ Body: RegisterRequest }>,
   reply: FastifyReply,
-) {
+): Promise<User> {
   const { email, password, name } = request.body;
 
   try {

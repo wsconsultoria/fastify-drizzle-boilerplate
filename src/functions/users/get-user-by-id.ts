@@ -3,6 +3,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 
 import { db } from '@/drizzle/db';
 import { users } from '@/drizzle/schema';
+import { User } from '@/validators';
 
 type UserParams = {
   id: string;
@@ -12,7 +13,7 @@ type UserParams = {
 export async function getUserById(
   request: FastifyRequest<{ Params: UserParams }>,
   reply: FastifyReply,
-) {
+): Promise<User> {
   const { id } = request.params;
 
   try {

@@ -10,7 +10,10 @@ const start = async () => {
 
     // Start the server
     await app.listen({ port: PORT, host: HOST });
+
+    // eslint-disable-next-line no-console
     console.log(`Server is running on http://${HOST}:${PORT}`);
+    // eslint-disable-next-line no-console
     console.log(`API documentation available at http://${HOST}:${PORT}/documentation`);
   } catch (err) {
     app.log.error(err);

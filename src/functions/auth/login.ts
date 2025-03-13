@@ -1,10 +1,11 @@
 import { eq } from 'drizzle-orm';
-import { FastifyReply, FastifyRequest } from 'fastify';
-
-import { hashPassword } from './utils';
+import { FastifyReply, FastifyRequest, FastifyInstance } from 'fastify';
 
 import { db } from '@/drizzle/db';
 import { users } from '@/drizzle/schema';
+import { User } from '@/validators';
+
+import { hashPassword } from './utils';
 
 type LoginRequest = {
   email: string;
@@ -12,40 +13,40 @@ type LoginRequest = {
 };
 
 // Login function
-export async function login(request: FastifyRequest<{ Body: LoginRequest }>, reply: FastifyReply) {
+export async function login(
+  fastify: FastifyInstance,
+  request: FastifyRequest<{ Body: LoginRequest }>,
+  reply: FastifyReply,
+): Promise<{ token: string; refreshToken: string; user: User }> {
   const { email, password } = request.body;
 
   try {
     // Find user by email
-    const user = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
 
-    if (user.length === 0) {
+    if (!user) {
       return reply.code(401).send({ error: 'Invalid email or password' });
     }
-
-    const foundUser = user[0];
 
     // Check password
     const hashedPassword = hashPassword(password);
-    if (hashedPassword !== foundUser.password) {
+    if (hashedPassword !== user.password) {
       return reply.code(401).send({ error: 'Invalid email or password' });
     }
 
-    // Generate JWT token
-    const token = await reply.jwtSign(
-      {
-        id: foundUser.id,
-        email: foundUser.email,
-      },
-      { expiresIn: '1d' },
-    );
+    // Gera o access token usando o método jwtSign do reply
+    const accessToken = await reply.jwtSign({ id: user.id, type: 'access' }, { expiresIn: '15m' });
+
+    // Gera o refresh token usando o método jwtSign do reply
+    const refreshToken = await reply.jwtSign({ id: user.id, type: 'refresh' }, { expiresIn: '7d' });
 
     return {
-      token,
+      token: accessToken,
+      refreshToken,
       user: {
-        id: foundUser.id,
-        email: foundUser.email,
-        name: foundUser.name,
+        id: user.id,
+        email: user.email,
+        name: user.name,
       },
     };
   } catch (error) {

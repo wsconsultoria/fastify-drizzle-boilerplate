@@ -17,7 +17,11 @@ type UpdateUserBody = {
 export async function updateUser(
   request: FastifyRequest<{ Params: UserParams; Body: UpdateUserBody }>,
   reply: FastifyReply,
-) {
+): Promise<{
+  id: number;
+  email: string;
+  name: string;
+}> {
   const { id } = request.params;
   const { name, email } = request.body;
 

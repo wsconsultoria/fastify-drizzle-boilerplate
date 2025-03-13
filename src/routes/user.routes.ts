@@ -9,7 +9,7 @@ import {
   updateUserBodySchema,
 } from '@/validators/users';
 
-export async function userRoutes(fastify: FastifyInstance) {
+export async function userRoutes(fastify: FastifyInstance): Promise<void> {
   // Add JWT authentication to all routes in this plugin
   fastify.addHook('onRequest', fastify.authenticate);
 
@@ -64,9 +64,6 @@ export async function userRoutes(fastify: FastifyInstance) {
     {
       schema: {
         params: userParamsSchema,
-        response: {
-          204: null,
-        },
       },
     },
     deleteUser,

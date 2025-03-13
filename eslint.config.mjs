@@ -17,7 +17,6 @@ export default tseslint.config(
     },
     rules: {
       // TypeScript específico
-      '@typescript-eslint/explicit-function-return-type': 'warn',
       '@typescript-eslint/explicit-module-boundary-types': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-unused-vars': ['error', { 
@@ -63,7 +62,9 @@ export default tseslint.config(
     },
     settings: {
       'import/resolver': {
-        typescript: {}
+        typescript: {
+          project: './tsconfig.json'
+        }
       }
     }
   }

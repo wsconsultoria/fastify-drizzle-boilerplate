@@ -12,7 +12,7 @@ type UserParams = {
 export async function deleteUser(
   request: FastifyRequest<{ Params: UserParams }>,
   reply: FastifyReply,
-) {
+): Promise<void> {
   const { id } = request.params;
 
   try {

@@ -2,9 +2,10 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 
 import { db } from '@/drizzle/db';
 import { users } from '@/drizzle/schema';
+import { User } from '@/validators';
 
 // Get all users
-export async function getUsers(request: FastifyRequest, reply: FastifyReply) {
+export async function getUsers(request: FastifyRequest, reply: FastifyReply): Promise<User[]> {
   try {
     const allUsers = await db
       .select({
