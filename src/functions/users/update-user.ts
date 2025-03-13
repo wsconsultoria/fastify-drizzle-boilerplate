@@ -1,7 +1,8 @@
+import { eq } from 'drizzle-orm';
 import { FastifyReply, FastifyRequest } from 'fastify';
+
 import { db } from '@/drizzle/db';
 import { users } from '@/drizzle/schema';
-import { eq } from 'drizzle-orm';
 
 type UserParams = {
   id: string;

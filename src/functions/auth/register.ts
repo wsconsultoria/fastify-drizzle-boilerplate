@@ -1,8 +1,10 @@
+import { eq } from 'drizzle-orm';
 import { FastifyReply, FastifyRequest } from 'fastify';
+
+import { hashPassword } from './utils';
+
 import { db } from '@/drizzle/db';
 import { users } from '@/drizzle/schema';
-import { eq } from 'drizzle-orm';
-import { hashPassword } from './utils';
 
 type RegisterRequest = {
   email: string;

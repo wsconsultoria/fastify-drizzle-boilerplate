@@ -1,4 +1,5 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
+
 import { db } from '@/drizzle/db';
 import { users } from '@/drizzle/schema';
 

@@ -1,30 +1,22 @@
 import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+import zodToJsonSchema from 'zod-to-json-schema';
+
 import { login, register } from '@/functions/auth';
-import { buildJsonSchemas } from 'fastify-zod';
 import { userSchema, loginBodySchema, loginResponseSchema, registerBodySchema } from '@/validators';
 
 export async function authRoutes(fastify: FastifyInstance) {
-  // Build JSON schemas for Fastify
-  const { schemas: authSchemas, $ref } = buildJsonSchemas({
-    userSchema,
-    loginBodySchema,
-    loginResponseSchema,
-    registerBodySchema,
-  });
-
-  // Add schemas to Fastify instance
-  for (const schema of authSchemas) {
-    fastify.addSchema(schema);
-  }
+  // Use regular Fastify instance
+  const app = fastify;
 
   // Login route
-  fastify.post(
+  app.withTypeProvider<ZodTypeProvider>().post(
     '/login',
     {
       schema: {
-        body: $ref('loginBodySchema'),
+        body: loginBodySchema,
         response: {
-          200: $ref('loginResponseSchema'),
+          200: loginResponseSchema,
         },
       },
     },
@@ -32,13 +24,13 @@ export async function authRoutes(fastify: FastifyInstance) {
   );
 
   // Register route
-  fastify.post(
+  app.withTypeProvider<ZodTypeProvider>().post(
     '/register',
     {
       schema: {
-        body: $ref('registerBodySchema'),
+        body: registerBodySchema,
         response: {
-          201: $ref('userSchema'),
+          201: userSchema,
         },
       },
     },

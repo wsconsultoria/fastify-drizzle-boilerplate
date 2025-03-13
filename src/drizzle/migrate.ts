@@ -1,4 +1,5 @@
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
+
 import { db } from './db';
 
 // This script will run all migrations in the migrations folder

@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify';
+import { ZodTypeProvider } from 'fastify-type-provider-zod';
+
 import { getUserById, getUsers, updateUser, deleteUser } from '@/functions/users';
-import { buildJsonSchemas } from 'fastify-zod';
 import {
   userSchema,
   userArraySchema,
@@ -12,26 +13,16 @@ export async function userRoutes(fastify: FastifyInstance) {
   // Add JWT authentication to all routes in this plugin
   fastify.addHook('onRequest', fastify.authenticate);
 
-  // Build JSON schemas for Fastify
-  const { schemas: userSchemas, $ref } = buildJsonSchemas({
-    userSchema,
-    userArraySchema,
-    userParamsSchema,
-    updateUserBodySchema,
-  });
-
-  // Add schemas to Fastify instance
-  for (const schema of userSchemas) {
-    fastify.addSchema(schema);
-  }
+  // Use regular Fastify instance
+  const app = fastify;
 
   // Get all users
-  fastify.get(
+  app.withTypeProvider<ZodTypeProvider>().get(
     '/',
     {
       schema: {
         response: {
-          200: $ref('userArraySchema'),
+          200: userArraySchema,
         },
       },
     },
@@ -39,13 +30,13 @@ export async function userRoutes(fastify: FastifyInstance) {
   );
 
   // Get user by ID
-  fastify.get(
+  app.withTypeProvider<ZodTypeProvider>().get(
     '/:id',
     {
       schema: {
-        params: $ref('userParamsSchema'),
+        params: userParamsSchema,
         response: {
-          200: $ref('userSchema'),
+          200: userSchema,
         },
       },
     },
@@ -53,14 +44,14 @@ export async function userRoutes(fastify: FastifyInstance) {
   );
 
   // Update user
-  fastify.put(
+  app.withTypeProvider<ZodTypeProvider>().put(
     '/:id',
     {
       schema: {
-        params: $ref('userParamsSchema'),
-        body: $ref('updateUserBodySchema'),
+        params: userParamsSchema,
+        body: updateUserBodySchema,
         response: {
-          200: $ref('userSchema'),
+          200: userSchema,
         },
       },
     },
@@ -68,11 +59,11 @@ export async function userRoutes(fastify: FastifyInstance) {
   );
 
   // Delete user
-  fastify.delete(
+  app.withTypeProvider<ZodTypeProvider>().delete(
     '/:id',
     {
       schema: {
-        params: $ref('userParamsSchema'),
+        params: userParamsSchema,
         response: {
           204: null,
         },
