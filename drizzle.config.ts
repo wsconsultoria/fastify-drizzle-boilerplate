@@ -3,8 +3,9 @@ import type { Config } from 'drizzle-kit';
 export default {
   schema: './src/drizzle/schema.ts',
   out: './src/drizzle/migrations',
-  driver: 'pg',
+  dialect: 'postgresql',
   dbCredentials: {
-    connectionString: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/boilerplate',
+    url: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/boilerplate',
+    ssl: false
   },
 } satisfies Config;
