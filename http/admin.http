@@ -1,0 +1,11 @@
+### Variáveis globais
+@baseUrl = http://localhost:3000/api
+@adminToken = seu_token_admin_aqui
+
+### Área administrativa (apenas ADMIN)
+GET {{baseUrl}}/admin
+Authorization: Bearer {{adminToken}}
+
+### Estatísticas administrativas (apenas ADMIN)
+GET {{baseUrl}}/admin/stats
+Authorization: Bearer {{adminToken}}

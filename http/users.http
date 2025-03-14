@@ -1,0 +1,25 @@
+### Variáveis globais
+@baseUrl = http://localhost:3000/api
+@authToken = seu_token_aqui
+
+### Listar todos os usuários
+GET {{baseUrl}}/users
+Authorization: Bearer {{authToken}}
+
+### Obter usuário por ID
+GET {{baseUrl}}/users/1
+Authorization: Bearer {{authToken}}
+
+### Atualizar usuário
+PUT {{baseUrl}}/users/1
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "name": "Nome Atualizado",
+  "email": "email_atualizado@exemplo.com"
+}
+
+### Deletar usuário
+DELETE {{baseUrl}}/users/1
+Authorization: Bearer {{authToken}}

@@ -1,0 +1,18 @@
+@baseUrl = http://localhost:3000
+
+### Teste de rota para verificar logs
+GET {{baseUrl}}/health
+Content-Type: application/json
+
+### Teste de rota protegida (deve gerar log de erro)
+GET {{baseUrl}}/protected
+Content-Type: application/json
+
+### Teste de login (deve gerar logs de sucesso)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "admin123"
+}

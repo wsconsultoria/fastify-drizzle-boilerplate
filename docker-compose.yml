@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:15-alpine
+    image: postgres:latest
     container_name: boilerplate-postgres
     restart: always
     ports:
@@ -18,20 +18,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: boilerplate-pgadmin
-    restart: always
-    ports:
-      - "5050:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: admin
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-    depends_on:
-      - postgres
 
 volumes:
   postgres_data:

@@ -1,0 +1,43 @@
+### Variáveis globais
+@baseUrl = http://localhost:3000/api
+@authToken = seu_token_aqui
+@refreshToken = seu_refresh_token_aqui
+
+### Registro de usuário comum (USER)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "usuario@exemplo.com",
+  "password": "senha123",
+  "name": "Usuário Teste",
+  "role": "USER"
+}
+
+### Registro de usuário administrador (ADMIN)
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "admin@exemplo.com",
+  "password": "senha123",
+  "name": "Admin Teste",
+  "role": "ADMIN"
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "usuario@exemplo.com",
+  "password": "senha123"
+}
+
+### Refresh Token
+POST {{baseUrl}}/auth/refresh-token
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}

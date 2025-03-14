@@ -9,6 +9,8 @@ import {
 } from 'fastify-type-provider-zod';
 
 import authenticate from '@/plugins/authenticate';
+import checkRole from '@/plugins/check-role';
+import loggerPlugin from '@/plugins/logger';
 import { registerRoutes } from '@/routes';
 
 // Scalar UI precisa ser importado via require
@@ -18,7 +20,7 @@ const scalarUI = require('@scalar/fastify-api-reference');
 
 // Create Fastify instance
 export const app: FastifyInstance = Fastify({
-  logger: true,
+  logger: false, // Desativamos o logger padrão do Fastify pois usaremos o Winston
 });
 
 // Setup function to register all plugins and routes
@@ -72,8 +74,12 @@ export async function setupApp(): Promise<FastifyInstance> {
     routePrefix: '/documentation',
   });
 
-  // Register authentication plugin
+  // Register logger plugin
+  app.register(loggerPlugin);
+  
+  // Register authentication plugins
   app.register(authenticate);
+  app.register(checkRole);
 
   // Register routes
   registerRoutes(app);

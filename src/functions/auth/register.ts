@@ -11,6 +11,7 @@ type RegisterRequest = {
   email: string;
   password: string;
   name: string;
+  role?: 'ADMIN' | 'USER';
 };
 
 // Register function
@@ -18,7 +19,7 @@ export async function register(
   request: FastifyRequest<{ Body: RegisterRequest }>,
   reply: FastifyReply,
 ): Promise<User> {
-  const { email, password, name } = request.body;
+  const { email, password, name, role = 'USER' } = request.body;
 
   try {
     // Check if user already exists
@@ -38,6 +39,7 @@ export async function register(
         email,
         password: hashedPassword,
         name,
+        role,
       })
       .returning();
 
@@ -45,6 +47,7 @@ export async function register(
       id: newUser.id,
       email: newUser.email,
       name: newUser.name,
+      role: newUser.role,
     });
   } catch (error) {
     request.log.error(error);

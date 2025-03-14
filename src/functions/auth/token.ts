@@ -4,19 +4,60 @@ import { FastifyInstance } from 'fastify';
 const ACCESS_TOKEN_EXPIRY = '15m'; // 15 minutos
 const REFRESH_TOKEN_EXPIRY = '7d'; // 7 dias
 
+type UserRole = 'USER' | 'ADMIN';
+
+interface JwtPayload {
+  id: number;
+  email?: string;
+  role: UserRole;
+  type: 'access' | 'refresh';
+}
+
+interface TokenVerificationResult {
+  valid: boolean;
+  userId?: number;
+  email?: string;
+  role?: UserRole;
+}
+
 /**
  * Gera um novo access token para um usuário
  */
-export function generateAccessToken(app: FastifyInstance, userId: number): string {
-  return app.jwt.sign({ id: userId, type: 'access' }, { expiresIn: ACCESS_TOKEN_EXPIRY });
+export function generateAccessToken(
+  app: FastifyInstance, 
+  userId: number, 
+  email: string | undefined = undefined, 
+  role: UserRole = 'USER'
+): string {
+  return app.jwt.sign(
+    { 
+      id: userId,
+      email,
+      role,
+      type: 'access'
+    } as JwtPayload, 
+    { expiresIn: ACCESS_TOKEN_EXPIRY }
+  );
 }
 
 /**
  * Gera um novo refresh token para um usuário
  */
-export function generateRefreshToken(app: FastifyInstance, userId: number): string {
-  // Usamos o mesmo segredo, mas com tipo diferente e expiração mais longa
-  return app.jwt.sign({ id: userId, type: 'refresh' }, { expiresIn: REFRESH_TOKEN_EXPIRY });
+export function generateRefreshToken(
+  app: FastifyInstance, 
+  userId: number, 
+  email: string | undefined = undefined, 
+  role: UserRole = 'USER'
+): string {
+  return app.jwt.sign(
+    { 
+      id: userId,
+      email,
+      role,
+      type: 'refresh'
+    } as JwtPayload, 
+    { expiresIn: REFRESH_TOKEN_EXPIRY }
+  );
 }
 
 /**
@@ -25,20 +66,24 @@ export function generateRefreshToken(app: FastifyInstance, userId: number): stri
 export function verifyRefreshToken(
   app: FastifyInstance,
   token: string,
-): { valid: boolean; userId?: number } {
+): TokenVerificationResult {
   try {
-    // Verificamos o token com as opções padrão
-    const decoded = app.jwt.verify(token) as { id: number; type: string };
+    const decoded = app.jwt.verify(token) as JwtPayload;
 
-    // Verificamos se é realmente um refresh token
     if (decoded.type !== 'refresh') {
       return { valid: false };
     }
 
-    return { valid: true, userId: decoded.id };
+    return { 
+      valid: true, 
+      userId: decoded.id,
+      email: decoded.email,
+      role: decoded.role
+    };
   } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error('Erro ao verificar refresh token:', error);
+    if (error instanceof Error) {
+      console.error('Erro ao verificar refresh token:', error.message);
+    }
     return { valid: false };
   }
 }

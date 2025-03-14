@@ -1,11 +1,15 @@
 import { z } from 'zod';
 
+// Enum para roles de usuário
+export const UserRoleEnum = z.enum(['ADMIN', 'USER']);
+
 // Schema for user object
 export const userSchema = z
   .object({
     id: z.number(),
     email: z.string().email(),
     name: z.string(),
+    role: UserRoleEnum,
   })
   .strict();
 

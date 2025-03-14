@@ -1,4 +1,7 @@
-import { pgTable, serial, varchar, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, timestamp, pgEnum } from 'drizzle-orm/pg-core';
+
+// Role enum definition
+export const userRoleEnum = pgEnum('user_role', ['ADMIN', 'USER']);
 
 // Users table schema
 export const users = pgTable('users', {
@@ -6,6 +9,7 @@ export const users = pgTable('users', {
   email: varchar('email', { length: 255 }).notNull().unique(),
   password: varchar('password', { length: 255 }).notNull(),
   name: varchar('name', { length: 255 }).notNull(),
+  role: userRoleEnum('role').default('USER').notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });

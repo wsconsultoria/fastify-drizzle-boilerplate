@@ -3,6 +3,7 @@ import { ZodTypeProvider } from 'fastify-type-provider-zod';
 import { z } from 'zod';
 
 import { login, register } from '@/functions/auth';
+import { refreshToken } from '@/functions/auth/refresh-token';
 import { userSchema, loginBodySchema, loginResponseSchema, registerBodySchema } from '@/validators';
 
 export async function authRoutes(fastify: FastifyInstance): Promise<void> {
@@ -53,7 +54,8 @@ export async function authRoutes(fastify: FastifyInstance): Promise<void> {
   // Define o schema para a resposta do refresh token
   const refreshTokenResponseSchema = z
     .object({
-      token: z.string(),
+      accessToken: z.string(),
+      refreshToken: z.string(),
     })
     .strict();
 
@@ -76,33 +78,11 @@ export async function authRoutes(fastify: FastifyInstance): Promise<void> {
         response: {
           200: refreshTokenResponseSchema,
           401: errorResponseSchema,
+          400: errorResponseSchema,
+          500: errorResponseSchema,
         },
       },
     },
-    async (request, reply) => {
-      const { refreshToken } = request.body;
-
-      try {
-        // Verifica o token diretamente com o método jwt.verify do fastify
-        const decoded = app.jwt.verify(refreshToken) as { id: number; type: string };
-
-        // Verifica se é um refresh token
-        if (decoded.type !== 'refresh') {
-          return reply.code(401).send({ error: 'Invalid refresh token' });
-        }
-
-        // Gera um novo access token
-        const newAccessToken = await reply.jwtSign(
-          { id: decoded.id, type: 'access' },
-          { expiresIn: '15m' },
-        );
-
-        return { token: newAccessToken };
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.error('Erro ao verificar refresh token:', error);
-        return reply.code(401).send({ error: 'Invalid refresh token' });
-      }
-    },
+    (request, reply) => refreshToken(request, reply),
   );
 }

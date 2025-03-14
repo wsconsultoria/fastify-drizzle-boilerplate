@@ -35,10 +35,16 @@ export async function login(
     }
 
     // Gera o access token usando o método jwtSign do reply
-    const accessToken = await reply.jwtSign({ id: user.id, type: 'access' }, { expiresIn: '15m' });
+    const accessToken = await reply.jwtSign(
+      { id: user.id, role: user.role, type: 'access' },
+      { expiresIn: '15m' }
+    );
 
     // Gera o refresh token usando o método jwtSign do reply
-    const refreshToken = await reply.jwtSign({ id: user.id, type: 'refresh' }, { expiresIn: '7d' });
+    const refreshToken = await reply.jwtSign(
+      { id: user.id, role: user.role, type: 'refresh' },
+      { expiresIn: '7d' }
+    );
 
     return {
       token: accessToken,
@@ -47,6 +53,7 @@ export async function login(
         id: user.id,
         email: user.email,
         name: user.name,
+        role: user.role,
       },
     };
   } catch (error) {

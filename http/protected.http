@@ -1,0 +1,20 @@
+### Variáveis globais
+@baseUrl = http://localhost:3000/api
+@userToken = seu_token_user_aqui
+@adminToken = seu_token_admin_aqui
+
+### Área protegida (USER e ADMIN podem acessar)
+GET {{baseUrl}}/protected
+Authorization: Bearer {{userToken}}
+
+### Perfil do usuário (USER e ADMIN podem acessar)
+GET {{baseUrl}}/protected/profile
+Authorization: Bearer {{userToken}}
+
+### Área protegida acessada como ADMIN
+GET {{baseUrl}}/protected
+Authorization: Bearer {{adminToken}}
+
+### Perfil do usuário acessado como ADMIN
+GET {{baseUrl}}/protected/profile
+Authorization: Bearer {{adminToken}}
