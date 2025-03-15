@@ -5,11 +5,11 @@ GET {{baseUrl}}/health
 Content-Type: application/json
 
 ### Teste de rota protegida (deve gerar log de erro)
-GET {{baseUrl}}/protected
+GET {{baseUrl}}/api/protected
 Content-Type: application/json
 
 ### Teste de login (deve gerar logs de sucesso)
-POST {{baseUrl}}/auth/login
+POST {{baseUrl}}/api/auth/login
 Content-Type: application/json
 
 {

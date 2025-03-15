@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 import { userSchema } from '../users';
+import { refreshToken } from '@/functions/auth/refresh-token';
 
 // Schema for login request body
 export const loginBodySchema = z
@@ -14,6 +15,7 @@ export const loginBodySchema = z
 export const loginResponseSchema = z
   .object({
     token: z.string(),
+    refreshToken: z.string(),
     user: userSchema,
   })
   .strict();
